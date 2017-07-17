@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'UserController@index');
+Route::get('{username}', 'UserController@store');
+Route::get('user/{user}', 'UserController@show');
+Route::get('search', 'UserController@search');
