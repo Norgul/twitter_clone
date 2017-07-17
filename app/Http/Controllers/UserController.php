@@ -9,7 +9,7 @@ use function MongoDB\BSON\toJSON;
 //use Thujohn\Twitter\Twitter;
 
 use Thujohn\Twitter\Facades\Twitter;
-
+use App\Tweet;
 
 class UserController extends Controller
 {
@@ -43,7 +43,10 @@ class UserController extends Controller
     {
         $tweets = Twitter::getUserTimeline(['user_id' => $user->twitter_id, 'count' => config('twitter.TWEET_LIMIT')]);
 
-
+        foreach ($tweets as $tweet) {
+            if (!Tweet::where('twitter_id', $tweet->id)->exists())
+                Tweet::create(['twitter_id' => $tweet->id, 'text' => $tweet->text, 'user_id' => $user->id]);
+        }
 
         return view('users.show', compact('user', 'tweets'));
     }
