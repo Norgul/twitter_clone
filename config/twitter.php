@@ -21,7 +21,8 @@ return [
 
 
     // CUSTOM CONFIG DATA
-    'TWEET_LIMIT'         => 20
+    'TWEET_LIMIT'         => 20,
+    'PAGINATE_LIMIT'      => 3,
 
 
 ];

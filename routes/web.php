@@ -12,6 +12,10 @@
 */
 
 Route::get('/', 'UserController@index');
+
+Route::get('search', 'UserController@search');
+Route::post('search/tweets', 'UserController@query');
+Route::get('search/results', 'UserController@results');
+
 Route::get('{username}', 'UserController@store');
 Route::get('user/{user}', 'UserController@show');
-Route::get('search', 'UserController@search');

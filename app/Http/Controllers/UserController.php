@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Mockery\Exception;
 use function MongoDB\BSON\toJSON;
 //use Thujohn\Twitter\Twitter;
@@ -50,4 +52,36 @@ class UserController extends Controller
 
         return view('users.show', compact('user', 'tweets'));
     }
+
+    public function search()
+    {
+        $users = User::pluck('name', 'id')->prepend('Pick a user', 0);
+        return view('search', compact('users'));
+    }
+
+    public function query(Request $request)
+    {
+        Session::put(['request' => $request->all()]);
+        return redirect('search/results');
+    }
+
+    public function results()
+    {
+        $request = Session::get('request');
+        $text = $request['text'];
+
+        $tweets = Tweet::whereRaw("MATCH (twitter_id, text) AGAINST ('$text')");
+
+        if ($request['user_id'] != 0)
+            $tweets = $tweets->where('user_id', $request['user_id']);
+
+        if (count($tweets) == 0)
+            return 'No tweets found by given query';
+
+        $tweets = $tweets->paginate(config('twitter.PAGINATE_LIMIT'));
+
+        return view('search_results', compact('tweets'));
+    }
+
+
 }
